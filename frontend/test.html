@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe and Grocery List</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      text-align: center;
+      padding: 20px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .tab-button.active {
+      background-color: #555;
+    }
+    .tab-button:hover {
+      background-color: #444;
+    }
+    .tab-content {
+      padding: 20px;
+      border: 1px solid #555;
+      background-color: #222;
+      margin: 0 auto;
+      width: 80%;
+    }
+    input[type="text"], button {
+      padding: 5px;
+      margin: 5px;
+      background-color: #333;
+      color: white;
+      border: 1px solid #555;
+    }
+    button {
+      cursor: pointer;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+    label {
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <input type="text" id="search-input" placeholder="Search for recipes...">
+    <button id="search-button">Search</button>
+  </div>
+  <div class="tabs">
+    <button class="tab-button" data-tab="ai-recipe">AI-Recipe</button>
+    <button class="tab-button" data-tab="grocery-list">Basic Grocery List</button>
+  </div>
+  <div class="tab-content" id="ai-recipe">
+    <h2>AI-Recipe</h2>
+    <label for="recipe-input">Enter Recipe Name:</label>
+    <input type="text" id="recipe-input">
+    <button id="get-ingredients">Get Ingredients</button>
+    <div id="ingredients-list">
+      <!-- Ingredients will be displayed here -->
+    </div>
+  </div>
+  <div class="tab-content" id="grocery-list" style="display: none;">
+    <h2>Basic Grocery List</h2>
+    <label for="grocery-input">Add Item:</label>
+    <input type="text" id="grocery-input">
+    <ul id="grocery-list">
+      <!-- Grocery items will be added here -->
+    </ul>
+  </div>
+  <script>
+    // Sample recipes object for demonstration
+    const recipes = {
+      "matar paneer": ["paneer", "peas", "tomatoes", "onions", "spices"],
+      "pasta": ["pasta", "tomato sauce", "cheese", "basil"]
+    };
+
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+        tabContents.forEach(content => {
+          content.style.display = content.id === tabId ? 'block' : 'none';
+        });
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+      });
+    });
+    // Set "AI-Recipe" tab as active by default
+    tabButtons[0].click();
+
+    // Display recipe ingredients
+    document.getElementById('get-ingredients').addEventListener('click', function() {
+      const recipeName = document.getElementById('recipe-input').value.toLowerCase();
+      const ingredientsList = document.getElementById('ingredients-list');
+      ingredientsList.innerHTML = ''; // Clear previous content
+      if (recipes[recipeName]) {
+        const ul = document.createElement('ul');
+        recipes[recipeName].forEach(ingredient => {
+          const li = document.createElement('li');
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          const label = document.createElement('label');
+          label.textContent = ingredient;
+          li.appendChild(checkbox);
+          li.appendChild(label);
+          ul.appendChild(li);
+        });
+        ingredientsList.appendChild(ul);
+      } else {
+        ingredientsList.textContent = 'Recipe not found.';
+      }
+    });
+
+    // Add items to grocery list
+    document.getElementById('grocery-input').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter' && this.value.trim() !== '') {
+        const li = document.createElement('li');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        const label = document.createElement('label');
+        label.textContent = this.value.trim();
+        li.appendChild(checkbox);
+        li.appendChild(label);
+        document.getElementById('grocery-list').appendChild(li);
+        this.value = ''; // Clear input
+      }
+    }); 
+
+    // Search bar functionality
+    document.getElementById('search-button').addEventListener('click', function() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      document.getElementById('recipe-input').value = searchTerm;
+      document.getElementById('get-ingredients').click();
+      document.querySelector('.tab-button[data-tab="ai-recipe"]').click();
+    });
+
+    // Search on Enter key
+    document.getElementById('search-input').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
+        document.getElementById('search-button').click();
+      }
+    });
+  </script>
+</body>
+</html>

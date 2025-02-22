@@ -1,0 +1,123 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  text-align: center;
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.tab-button.active {
+  background-color: #555;
+}
+
+.tab-button:hover {
+  background-color: #444;
+}
+
+/* Style for icons in tabs */
+.tab-button i {
+  margin-right: 5px;
+}
+
+.tab-content {
+  padding: 20px;
+  border: 1px solid #555;
+  background-color: #222;
+  margin: 0 auto;
+  width: 80%;
+}
+
+input[type="text"], button {
+  padding: 5px;
+  margin: 5px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Remove bullet points from lists */
+ul, li {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+/* Hide default checkbox */
+.checkbox-container input {
+  display: none;
+}
+
+.checkbox-container label {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Fancy checkbox design (circular) */
+.checkbox-container label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  background-color: #333;
+  border-radius: 50%; /* Makes it circular */
+  transition: background-color 0.3s ease;
+}
+
+/* Change background when checked */
+.checkbox-container input:checked + label::before {
+  background-color: #4CAF50; /* Green when checked */
+}
+
+/* Inner circle as checkmark */
+.checkbox-container label::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Show inner circle when checked */
+.checkbox-container input:checked + label::after {
+  opacity: 1;
+}

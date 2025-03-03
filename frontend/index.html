@@ -3,36 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recipe and Grocery List</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Recipe & Grocery List</title>
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-  <div class="header">
-    <input type="text" id="search-input" placeholder="Search for recipes...">
-    <button id="search-button">Search</button>
-  </div>
   <div class="tabs">
-    <button class="tab-button" data-tab="ai-recipe">
-      <i class="fas fa-utensils"></i> AI-Recipe
-    </button>
-    <button class="tab-button" data-tab="grocery-list"
-      <i class="fas fa-shopping-cart"></i> Basic Grocery List
-    </button>
+    <button class="tab-button" data-tab="ai-recipe">AI-Recipe</button>
+    <button class="tab-button" data-tab="grocery-list">Basic Grocery List</button>
   </div>
   <div class="tab-content" id="ai-recipe">
     <h2>AI-Recipe</h2>
-    <label for="recipe-input">Enter Recipe Name:</label>
-    <input type="text" id="recipe-input">
-    <button id="get-ingredients">Get Ingredients</button>
-    <div id="ingredients-list"></div>
+    <form id="recipe-form">
+      <label for="dish">Dish Name:</label>
+      <input type="text" id="dish" placeholder="e.g., Paneer Peas Curry" required>
+      <label for="servings">Servings:</label>
+      <input type="number" id="servings" min="1" placeholder="e.g., 4" required>
+      <button type="submit">Get Recipe</button>
+    </form>
+    <div id="recipe-result"></div>
   </div>
   <div class="tab-content" id="grocery-list" style="display: none;">
     <h2>Basic Grocery List</h2>
-    <label for="grocery-input">Add Item:</label>
-    <input type="text" id="grocery-input">
-    <ul id="grocery-list-items"></ul>
+    <label for="grocery-input">Add Shopping Item:</label>
+    <input type="text" id="grocery-input" placeholder="e.g., Milk">
+    <ul id="grocery-list"></ul>
   </div>
   <script src="js/script.js"></script>
 </body>

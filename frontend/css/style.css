@@ -3,11 +3,6 @@ body {
   color: white;
   font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-}
-
-.header {
-  text-align: center;
   padding: 20px;
 }
 
@@ -24,6 +19,7 @@ body {
   border: none;
   cursor: pointer;
   margin: 0 5px;
+  transition: background-color 0.3s ease;
 }
 
 .tab-button.active {
@@ -34,45 +30,80 @@ body {
   background-color: #444;
 }
 
-/* Style for icons in tabs */
-.tab-button i {
-  margin-right: 5px;
-}
-
 .tab-content {
   padding: 20px;
   border: 1px solid #555;
   background-color: #222;
   margin: 0 auto;
-  width: 80%;
+  max-width: 800px;
+  border-radius: 5px;
 }
 
-input[type="text"], button {
-  padding: 5px;
+h2 {
+  margin-top: 0;
+  color: #ddd;
+}
+
+label {
+  margin-right: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+button {
+  padding: 8px;
   margin: 5px;
   background-color: #333;
   color: white;
   border: 1px solid #555;
+  border-radius: 4px;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 200px;
 }
 
 button {
+  background-color: #4CAF50;
+  border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Remove bullet points from lists */
-ul, li {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+button:hover {
+  background-color: #45a049;
+}
+
+#recipe-result {
+  margin-top: 20px;
+}
+
+#recipe-result h2 {
+  color: #4CAF50;
+}
+
+#recipe-result h3 {
+  margin-top: 15px;
+  color: #ddd;
+}
+
+#recipe-result ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+}
+
+#recipe-result p {
+  line-height: 1.6;
 }
 
 .checkbox-container {
   display: flex;
   align-items: center;
-  margin: 5px 0;
+  margin: 8px 0;
 }
 
-/* Hide default checkbox */
 .checkbox-container input {
   display: none;
 }
@@ -84,7 +115,6 @@ ul, li {
   font-size: 16px;
 }
 
-/* Fancy checkbox design (circular) */
 .checkbox-container label::before {
   content: '';
   position: absolute;
@@ -94,16 +124,14 @@ ul, li {
   height: 20px;
   border: 2px solid #fff;
   background-color: #333;
-  border-radius: 50%; /* Makes it circular */
+  border-radius: 50%;
   transition: background-color 0.3s ease;
 }
 
-/* Change background when checked */
 .checkbox-container input:checked + label::before {
-  background-color: #4CAF50; /* Green when checked */
+  background-color: #4CAF50;
 }
 
-/* Inner circle as checkmark */
 .checkbox-container label::after {
   content: '';
   position: absolute;
@@ -117,7 +145,6 @@ ul, li {
   transition: opacity 0.3s ease;
 }
 
-/* Show inner circle when checked */
 .checkbox-container input:checked + label::after {
   opacity: 1;
 }

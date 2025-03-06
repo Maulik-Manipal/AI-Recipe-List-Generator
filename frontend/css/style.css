@@ -1,150 +1,185 @@
+:root {
+  --primary: #2ecc71;
+  --secondary: #27ae60;
+  --background: #1a1a1a;
+  --surface: #2d2d2d;
+  --text: #ffffff;
+  --text-secondary: #b3b3b3;
+}
+
+[data-theme="light"] {
+  --background: #f5f6fa;
+  --surface: #ffffff;
+  --text: #2d3436;
+  --text-secondary: #636e72;
+}
+
 body {
-  background-color: black;
-  color: white;
-  font-family: Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
   margin: 0;
   padding: 20px;
+  transition: background 0.3s ease;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .tabs {
   display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
   justify-content: center;
-  margin-bottom: 20px;
 }
 
 .tab-button {
-  padding: 10px 20px;
-  background-color: #333;
-  color: white;
+  padding: 1rem 2rem;
+  background: var(--surface);
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  margin: 0 5px;
-  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
 }
 
-.tab-button.active {
-  background-color: #555;
-}
-
-.tab-button:hover {
-  background-color: #444;
+.tab-button.active, .tab-button:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
 }
 
 .tab-content {
-  padding: 20px;
-  border: 1px solid #555;
-  background-color: #222;
+  max-width: 1200px;
   margin: 0 auto;
-  max-width: 800px;
-  border-radius: 5px;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: none;
 }
 
-h2 {
-  margin-top: 0;
-  color: #ddd;
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.recipe-card, .grocery-card {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
 }
 
 label {
-  margin-right: 10px;
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
 }
 
-input[type="text"],
-input[type="number"],
-button {
-  padding: 8px;
-  margin: 5px;
-  background-color: #333;
+input[type="text"], input[type="number"] {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.cta-button {
+  background: var(--primary);
   color: white;
-  border: 1px solid #555;
-  border-radius: 4px;
-}
-
-input[type="text"],
-input[type="number"] {
-  width: 200px;
-}
-
-button {
-  background-color: #4CAF50;
+  padding: 1rem 2rem;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s ease;
 }
 
-button:hover {
-  background-color: #45a049;
+.cta-button:hover {
+  transform: scale(1.05);
 }
 
-#recipe-result {
-  margin-top: 20px;
+.recipe-result {
+  margin-top: 2rem;
 }
 
-#recipe-result h2 {
-  color: #4CAF50;
+.ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-#recipe-result h3 {
-  margin-top: 15px;
-  color: #ddd;
-}
-
-#recipe-result ul {
-  list-style-type: disc;
-  margin-left: 20px;
-  padding-left: 0;
-}
-
-#recipe-result p {
-  line-height: 1.6;
+.grocery-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .checkbox-container {
   display: flex;
   align-items: center;
-  margin: 8px 0;
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 8px;
+  transition: transform 0.2s ease;
 }
 
-.checkbox-container input {
+.checkbox-container:hover {
+  transform: translateX(5px);
+}
+
+.loading-spinner {
   display: none;
-}
-
-.checkbox-container label {
-  position: relative;
-  padding-left: 30px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.checkbox-container label::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #fff;
-  background-color: #333;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary);
   border-radius: 50%;
-  transition: background-color 0.3s ease;
+  animation: spin 1s linear infinite;
 }
 
-.checkbox-container input:checked + label::before {
-  background-color: #4CAF50;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.checkbox-container label::after {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 5px;
-  width: 10px;
-  height: 10px;
-  background-color: #fff;
-  border-radius: 50%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.checkbox-container input:checked + label::after {
-  opacity: 1;
+/* Add responsive design */
+@media (max-width: 768px) {
+  .tabs { flex-direction: column; }
+  .tab-button { justify-content: center; }
 }

@@ -3,31 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recipe & Grocery List</title>
+  <title>Recipe Master</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+  <header class="header">
+    <h1>🍴 Recipe Master</h1>
+    <div class="theme-toggle">
+      <i class="fas fa-sun"></i>
+      <label class="switch">
+        <input type="checkbox" id="theme-switch">
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </header>
+
   <div class="tabs">
-    <button class="tab-button" data-tab="ai-recipe">AI-Recipe</button>
-    <button class="tab-button" data-tab="grocery-list">Basic Grocery List</button>
+    <button class="tab-button active" data-tab="ai-recipe">
+      <i class="fas fa-robot"></i> AI Recipes
+    </button>
+    <button class="tab-button" data-tab="meal-planner">
+      <i class="fas fa-calendar-alt"></i> Meal Planner
+    </button>
+    <button class="tab-button" data-tab="grocery-list">
+      <i class="fas fa-shopping-cart"></i> Grocery List
+    </button>
   </div>
-  <div class="tab-content" id="ai-recipe">
-    <h2>AI-Recipe</h2>
-    <form id="recipe-form">
-      <label for="dish">Dish Name:</label>
-      <input type="text" id="dish" placeholder="e.g., Paneer Peas Curry" required>
-      <label for="servings">Servings:</label>
-      <input type="number" id="servings" min="1" placeholder="e.g., 4" required>
-      <button type="submit">Get Recipe</button>
-    </form>
-    <div id="recipe-result"></div>
+
+  <!-- AI Recipes Tab -->
+  <div class="tab-content active" id="ai-recipe">
+    <div class="recipe-card">
+      <form id="recipe-form">
+        <div class="input-group">
+          <label for="dish"><i class="fas fa-utensils"></i> Dish Name:</label>
+          <input type="text" id="dish" placeholder="e.g., Lobster Risotto" required>
+        </div>
+        <div class="input-group">
+          <label for="servings"><i class="fas fa-users"></i> Servings:</label>
+          <input type="number" id="servings" min="1" value="4" required>
+        </div>
+        <button type="submit" class="cta-button">
+          <i class="fas fa-magic"></i> Generate Recipe
+        </button>
+      </form>
+      <div id="recipe-result" class="recipe-result"></div>
+    </div>
   </div>
-  <div class="tab-content" id="grocery-list" style="display: none;">
-    <h2>Basic Grocery List</h2>
-    <label for="grocery-input">Add Shopping Item:</label>
-    <input type="text" id="grocery-input" placeholder="e.g., Milk">
-    <ul id="grocery-list"></ul>
+
+  <!-- Meal Planner Tab -->
+  <div class="tab-content" id="meal-planner">
+    <div class="meal-planner-container">
+      <h2><i class="fas fa-calendar-week"></i> Weekly Planner</h2>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
   </div>
+
+  <!-- Grocery List Tab -->
+  <div class="tab-content" id="grocery-list">
+    <div class="grocery-card">
+      <div class="grocery-input-group">
+        <input type="text" id="grocery-input" placeholder="Add item (e.g., Milk)">
+        <button class="add-button" id="add-grocery">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+      <ul id="grocery-list" class="grocery-list"></ul>
+      <div class="grocery-actions">
+        <button class="clear-button" id="clear-list">
+          <i class="fas fa-trash"></i> Clear List
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-spinner" id="loading-spinner"></div>
   <script src="js/script.js"></script>
 </body>
 </html>

@@ -2,42 +2,30 @@
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
 
-// Attach click event listeners to tab buttons
 tabButtons.forEach(button => {
   button.addEventListener('click', () => {
     const tabId = button.getAttribute('data-tab');
-    
-    // Show the selected tab content, hide others
     tabContents.forEach(content => {
-      if (content.id === tabId) {
-        content.style.display = 'block';
-      } else {
-        content.style.display = 'none';
-      }
+      content.style.display = content.id === tabId ? 'block' : 'none';
     });
-    
-    // Update active class on buttons
     tabButtons.forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
   });
 });
 
-// Set "AI-Recipe" tab as active by default
-tabButtons[0].click();
+tabButtons[0].click(); // Set "AI-Recipe" as default
 
 // Recipe form submission
 document.getElementById('recipe-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); // Prevent page reload
+  event.preventDefault();
 
-  const dish = document.getElementById('dish').value;
+  const dish = document.getElementById('dish').value; // Keep exact dish name
   const servings = document.getElementById('servings').value;
   const resultDiv = document.getElementById('recipe-result');
 
-  // Show loading message
   resultDiv.innerHTML = 'Loading...';
 
   try {
-    // Send POST request to backend
     const response = await fetch('http://localhost:3000/api/recipe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -46,14 +34,24 @@ document.getElementById('recipe-form').addEventListener('submit', async (event) 
 
     const data = await response.json();
 
-    // Display recipe
     if (response.ok) {
       resultDiv.innerHTML = `
-        <h2>${data.raw?.title || dish}</h2>
+        <h2>${dish}</h2> <!-- Use user-entered dish name -->
         <h3>Ingredients:</h3>
-        <ul>${data.ingredients?.map(ing => `<li>${ing}</li>`).join('') || 'No ingredients available.'}</ul>
+        <ul>
+          ${data.ingredients?.map(ing => `
+            <li>
+              <div class="checkbox-container">
+                <input type="checkbox" id="ing-${ing.replace(/\s+/g, '-')}-${Date.now()}">
+                <label for="ing-${ing.replace(/\s+/g, '-')}-${Date.now()}">${ing}</label>
+              </div>
+            </li>
+          `).join('') || '<li>No ingredients available.</li>'}
+        </ul>
         <h3>Instructions:</h3>
-        <ol>${data.steps?.map(step => `<li>${step}</li>`).join('') || 'No instructions available.'}</ol>
+        <ol>
+          ${data.steps?.map(step => `<li>${step}</li>`).join('') || '<li>No instructions available.</li>'}
+        </ol>
       `;
     } else {
       resultDiv.innerHTML = `<p>Error: ${data.message || 'Recipe not found.'}</p>`;
@@ -71,7 +69,7 @@ document.getElementById('grocery-input').addEventListener('keyup', function(even
     checkboxContainer.className = 'checkbox-container';
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.id = `grocery-item-${Date.now()}`; // Unique ID
+    checkbox.id = `grocery-item-${Date.now()}`;
     const label = document.createElement('label');
     label.htmlFor = checkbox.id;
     label.textContent = this.value.trim();
@@ -79,6 +77,23 @@ document.getElementById('grocery-input').addEventListener('keyup', function(even
     checkboxContainer.appendChild(label);
     li.appendChild(checkboxContainer);
     document.getElementById('grocery-list').appendChild(li);
-    this.value = ''; // Clear input
+    this.value = '';
   }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const themeSwitch = document.getElementById('theme-switch');
+
+  // Check local storage for saved theme
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.body.setAttribute('data-theme', savedTheme);
+  themeSwitch.checked = savedTheme === 'light';
+
+  // Toggle theme on switch change
+  themeSwitch.addEventListener('change', () => {
+    const newTheme = themeSwitch.checked ? 'light' : 'dark';
+    document.body.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme); // Save theme to local storage
+  });
 });

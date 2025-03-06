@@ -15,11 +15,11 @@ tabButtons.forEach(button => {
 
 tabButtons[0].click(); // Set "AI-Recipe" as default
 
-// Recipe form submission
+// Recipe form submission (existing)
 document.getElementById('recipe-form').addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const dish = document.getElementById('dish').value; // Keep exact dish name
+  const dish = document.getElementById('dish').value;
   const servings = document.getElementById('servings').value;
   const resultDiv = document.getElementById('recipe-result');
 
@@ -36,7 +36,7 @@ document.getElementById('recipe-form').addEventListener('submit', async (event) 
 
     if (response.ok) {
       resultDiv.innerHTML = `
-        <h2>${dish}</h2> <!-- Use user-entered dish name -->
+        <h2>${dish}</h2>
         <h3>Ingredients:</h3>
         <ul>
           ${data.ingredients?.map(ing => `
@@ -61,7 +61,90 @@ document.getElementById('recipe-form').addEventListener('submit', async (event) 
   }
 });
 
-// Add items to grocery list
+// New: Recommendations form submission
+document.getElementById('preferences-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const diet = document.getElementById('diet').value;
+  const ingredients = document.getElementById('ingredients').value;
+  const resultDiv = document.getElementById('recommendations-result');
+
+  resultDiv.innerHTML = '<p>Loading...</p>';
+
+  try {
+    const response = await fetch('http://localhost:3000/api/recommendations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ diet, ingredients })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      if (data.recipes && data.recipes.length > 0) {
+        displayRecommendations(data.recipes);
+      } else {
+        resultDiv.innerHTML = '<p>No recommendations found based on your preferences.</p>';
+      }
+    } else {
+      resultDiv.innerHTML = `<p>Error: ${data.error || 'Failed to fetch recommendations'}</p>`;
+    }
+  } catch (error) {
+    resultDiv.innerHTML = `<p>Something went wrong: ${error.message}</p>`;
+  }
+});
+
+// New: Function to display recommendations
+function displayRecommendations(recipes) {
+  const resultDiv = document.getElementById('recommendations-result');
+  resultDiv.innerHTML = '';
+
+  recipes.forEach(recipe => {
+    const recipeCard = document.createElement('div');
+    recipeCard.className = 'recipe-card';
+    recipeCard.innerHTML = `
+      <img src="${recipe.image}" alt="${recipe.title}">
+      <h3>${recipe.title}</h3>
+      <button onclick="toggleRecipeDetails(${recipe.id}, this)">View Recipe</button>
+      <div id="recipe-details-${recipe.id}" style="display: none;">
+        <p>Loading...</p>
+      </div>
+    `;
+    resultDiv.appendChild(recipeCard);
+  });
+}
+
+// New: Function to toggle recipe details
+async function toggleRecipeDetails(id, button) {
+  const detailsDiv = document.getElementById(`recipe-details-${id}`);
+
+  if (detailsDiv.style.display === 'none') {
+    try {
+      const response = await fetch(`http://localhost:3000/api/recipe/${id}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        detailsDiv.innerHTML = `
+          <h4>Ingredients:</h4>
+          <ul>${data.ingredients.map(ing => `<li>${ing}</li>`).join('')}</ul>
+          <h4>Instructions:</h4>
+          <ol>${data.steps.map(step => `<li>${step}</li>`).join('')}</ol>
+        `;
+        detailsDiv.style.display = 'block';
+        button.textContent = 'Hide Recipe';
+      } else {
+        detailsDiv.innerHTML = '<p>Failed to load recipe.</p>';
+      }
+    } catch (error) {
+      detailsDiv.innerHTML = `<p>Something went wrong: ${error.message}</p>`;
+    }
+  } else {
+    detailsDiv.style.display = 'none';
+    button.textContent = 'View Recipe';
+  }
+}
+
+// Add items to grocery list (existing)
 document.getElementById('grocery-input').addEventListener('keyup', function(event) {
   if (event.key === 'Enter' && this.value.trim() !== '') {
     const li = document.createElement('li');
@@ -81,19 +164,17 @@ document.getElementById('grocery-input').addEventListener('keyup', function(even
   }
 });
 
-
+// Theme toggle (existing)
 document.addEventListener('DOMContentLoaded', () => {
   const themeSwitch = document.getElementById('theme-switch');
 
-  // Check local storage for saved theme
   const savedTheme = localStorage.getItem('theme') || 'dark';
   document.body.setAttribute('data-theme', savedTheme);
   themeSwitch.checked = savedTheme === 'light';
 
-  // Toggle theme on switch change
   themeSwitch.addEventListener('change', () => {
     const newTheme = themeSwitch.checked ? 'light' : 'dark';
     document.body.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme); // Save theme to local storage
+    localStorage.setItem('theme', newTheme);
   });
 });

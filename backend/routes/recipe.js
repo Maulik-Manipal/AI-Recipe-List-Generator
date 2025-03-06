@@ -7,6 +7,7 @@ require('dotenv').config();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = 'https://api.spoonacular.com/recipes';
 
+// Existing route: POST /recipe (for generating a recipe by dish name)
 router.post('/recipe', async (req, res) => {
   const { dish, servings } = req.body;
 
@@ -47,10 +48,59 @@ router.post('/recipe', async (req, res) => {
 
     // Send response
     res.json({
-      ingredients, // e.g., ["200.00 g paneer", "1.00 cup peas"]
-      steps,       // e.g., ["Heat oil...", "Add onions..."]
-      raw: recipe  // Optional: full recipe data
+      ingredients,
+      steps,
+      raw: recipe
     });
+  } catch (error) {
+    console.error('Spoonacular Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch recipe' });
+  }
+});
+
+// New route: POST /recommendations (for personalized recommendations)
+router.post('/recommendations', async (req, res) => {
+  const { diet, ingredients } = req.body;
+
+  try {
+    const params = {
+      apiKey: SPOONACULAR_API_KEY,
+      number: 5 // Limit to 5 recommendations
+    };
+
+    if (diet) params.diet = diet; // e.g., "vegetarian", "vegan"
+    if (ingredients) params.includeIngredients = ingredients; // e.g., "chicken, tomato"
+
+    const response = await axios.get(`${SPOONACULAR_BASE_URL}/complexSearch`, { params });
+    const recipes = response.data.results.map(recipe => ({
+      id: recipe.id,
+      title: recipe.title,
+      image: recipe.image
+    }));
+
+    res.json({ recipes });
+  } catch (error) {
+    console.error('Spoonacular Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch recommendations' });
+  }
+});
+
+// New route: GET /recipe/:id (for fetching full recipe details by ID)
+router.get('/recipe/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await axios.get(`${SPOONACULAR_BASE_URL}/${id}/information`, {
+      params: { apiKey: SPOONACULAR_API_KEY }
+    });
+
+    const recipe = response.data;
+    const ingredients = recipe.extendedIngredients.map(ing => 
+      `${ing.measures.metric.amount} ${ing.measures.metric.unitShort} ${ing.name}`
+    );
+    const steps = recipe.analyzedInstructions[0]?.steps.map(step => step.step) || [];
+
+    res.json({ ingredients, steps, raw: recipe });
   } catch (error) {
     console.error('Spoonacular Error:', error.message);
     res.status(500).json({ error: 'Failed to fetch recipe' });

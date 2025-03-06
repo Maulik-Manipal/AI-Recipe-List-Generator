@@ -23,6 +23,9 @@
     <button class="tab-button active" data-tab="ai-recipe">
       <i class="fas fa-robot"></i> AI Recipes
     </button>
+    <button class="tab-button" data-tab="recommendations">
+      <i class="fas fa-star"></i> Recommended for You
+    </button>
     <button class="tab-button" data-tab="meal-planner">
       <i class="fas fa-calendar-alt"></i> Meal Planner
     </button>
@@ -51,6 +54,24 @@
     </div>
   </div>
 
+  <!-- Recommended for You Tab -->
+  <div class="tab-content" id="recommendations" style="display: none;">
+    <h2>Recommended for You</h2>
+    <form id="preferences-form">
+      <label for="diet">Dietary Preference:</label>
+      <select id="diet">
+        <option value="">None</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="gluten-free">Gluten-Free</option>
+      </select>
+      <label for="ingredients">Favorite Ingredients (comma-separated):</label>
+      <input type="text" id="ingredients" placeholder="e.g., chicken, tomato">
+      <button type="submit">Get Recommendations</button>
+    </form>
+    <div id="recommendations-result"></div>
+  </div>
+
   <!-- Meal Planner Tab -->
   <div class="tab-content" id="meal-planner">
     <div class="meal-planner-container">
@@ -76,7 +97,6 @@
       </div>
     </div>
   </div>
-
   <div class="loading-spinner" id="loading-spinner"></div>
   <script src="js/script.js"></script>
 </body>

@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const recipeRoutes = require('./routes/recipe');
+const youtubeRoutes = require('./routes/youtube'); // ADDED THIS LINE
+require('dotenv').config(); // ADDED THIS LINE to load your API keys
 
 const app = express();
 
@@ -10,6 +12,7 @@ app.use(cors());
 
 // Routes
 app.use('/api', recipeRoutes);
+app.use('/api/youtube', youtubeRoutes); // ADDED THIS LINE
 
 
 app.get('/', (req, res) => {

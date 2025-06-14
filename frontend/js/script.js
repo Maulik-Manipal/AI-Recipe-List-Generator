@@ -22,8 +22,10 @@ document.getElementById('recipe-form').addEventListener('submit', async (event) 
   const dish = document.getElementById('dish').value;
   const servings = document.getElementById('servings').value;
   const resultDiv = document.getElementById('recipe-result');
+  const videoContainer = document.getElementById('video-container');
 
   resultDiv.innerHTML = 'Loading...';
+  videoContainer.innerHTML = '';
 
   try {
     const response = await fetch('http://localhost:3000/api/recipe', {
@@ -53,13 +55,47 @@ document.getElementById('recipe-form').addEventListener('submit', async (event) 
           ${data.steps?.map(step => `<li>${step}</li>`).join('') || '<li>No instructions available.</li>'}
         </ol>
       `;
+
+      // Now fetch YouTube video
+      const ytResponse = await fetch(`http://localhost:3000/api/youtube/search?q=${encodeURIComponent(dish)}`);
+const ytData = await ytResponse.json();
+
+videoContainer.innerHTML = ''; // Clear previous
+
+if (ytResponse.ok && ytData.embedUrl) {
+  const title = document.createElement('h3');
+  title.textContent = 'Video Tutorial';
+  videoContainer.appendChild(title);
+
+  const iframe = document.createElement('iframe');
+  iframe.src = `${ytData.embedUrl}?rel=0`;
+  iframe.title = `YouTube tutorial for ${dish}`;
+  iframe.frameBorder = '0';
+  iframe.allowFullscreen = true;
+  iframe.setAttribute('allow', 'fullscreen');
+  iframe.style.border = 'none';
+  iframe.style.width = '100%';
+  iframe.style.height = '100%';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'iframe-container';
+  wrapper.appendChild(iframe);
+
+  videoContainer.appendChild(wrapper);
+} else {
+  videoContainer.innerHTML = `<p>No video found for "${dish}".</p>`;
+}
+
+
     } else {
       resultDiv.innerHTML = `<p>Error: ${data.message || 'Recipe not found.'}</p>`;
     }
   } catch (error) {
     resultDiv.innerHTML = `<p>Something went wrong: ${error.message}</p>`;
+    videoContainer.innerHTML = '';
   }
 });
+
 
 // New: Recommendations form submission
 document.getElementById('preferences-form').addEventListener('submit', async (event) => {

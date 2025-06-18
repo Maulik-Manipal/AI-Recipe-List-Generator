@@ -9,7 +9,7 @@
 </head>
 <body>
   <header class="header">
-    <h1>🍴 Dish Crafter</h1>
+    <h1>🍴 Recipe Finder</h1>
     <div class="theme-toggle">
       <i class="fas fa-sun"></i>
       <label class="switch">
@@ -32,6 +32,10 @@
     <button class="tab-button" data-tab="grocery-list">
       <i class="fas fa-shopping-cart"></i> Grocery List
     </button>
+    <button class="tab-button" data-tab="random-recipe">
+      <i class="fas fa-random"></i> Random Recipe
+    </button>
+
   </div>
 
   <div class="tab-content active" id="ai-recipe">
@@ -82,23 +86,56 @@
     </div>
   </div>
 
-  <div class="tab-content" id="grocery-list">
-    <div class="grocery-card">
-      <div class="grocery-input-group">
-        <input type="text" id="grocery-input" placeholder="Add item (e.g., Milk)">
-        <button class="add-button" id="add-grocery">
-          <i class="fas fa-plus"></i>
-        </button>
-      </div>
-      <ul id="grocery-list" class="grocery-list"></ul>
-      <div class="grocery-actions">
-        <button class="clear-button" id="clear-list">
-          <i class="fas fa-trash"></i> Clear List
-        </button>
-      </div>
+<div class="tab-content" id="grocery-list">
+  <div class="grocery-card">
+    <div class="grocery-input-group">
+      <input type="text" id="grocery-input" placeholder="Add item (e.g., Milk)">
+      <button class="add-button" id="add-grocery">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+    <div id="grocery-items" class="grocery-items"></div> <!-- Changed to div -->
+    <div class="grocery-actions">
+      <button class="clear-button" id="clear-list">
+        <i class="fas fa-trash"></i> Clear List
+      </button>
     </div>
   </div>
+</div>
   <div class="loading-spinner" id="loading-spinner"></div>
   <script src="js/script.js"></script>
+
+<div class="tab-content" id="random-recipe" style="display: none;">
+  <div class="recipe-card">
+    <div class="input-group">
+      <label for="include-tags"><i class="fas fa-filter"></i> Include Tags:</label>
+      <select id="include-tags" multiple>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="dessert">Dessert</option>
+        <option value="main course">Main Course</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="gluten free">Gluten Free</option>
+        <option value="salad">Salad</option>
+        <option value="soup">Soup</option>
+        <option value="snack">Snack</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="exclude-ingredients"><i class="fas fa-ban"></i> Exclude Ingredients:</label>
+      <input type="text" id="exclude-ingredients" placeholder="e.g., nuts, dairy">
+
+    <div class="input-group">
+      <label><input type="checkbox" id="include-nutrition"> Include Nutrition Info</label>
+    </div>
+
+    <button id="get-random" class="cta-button">
+      <i class="fas fa-dice"></i> Get Random Recipe
+    </button>
+
+    <div id="random-result" class="recipe-result"></div>
+  </div>
+</div>
+
 </body>
 </html>

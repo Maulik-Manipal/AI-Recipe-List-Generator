@@ -110,3 +110,34 @@ router.get('/recipe/:id', async (req, res) => {
 module.exports = router;
 
 console.log('API Key:', process.env.SPOONACULAR_API_KEY ? 'Loaded' : 'Not Loaded');
+
+router.get('/random-recipe', async (req, res) => {
+  const { includeTags, excludeTags, includeNutrition } = req.query;
+
+  try {
+    const response = await axios.get('https://api.spoonacular.com/recipes/random', {
+      params: {
+        apiKey: SPOONACULAR_API_KEY,
+        number: 1,
+        ...(includeTags && { 'tags': includeTags }), // Note: Spoonacular uses "tags", not "include-tags"
+        ...(excludeTags && { 'exclude-tags': excludeTags }),
+        ...(includeNutrition === 'true' && { includeNutrition: true })
+      }
+    });
+
+    const recipe = response.data.recipes[0];
+    const ingredients = recipe.extendedIngredients.map(ing => `${ing.original}`);
+    const steps = recipe.analyzedInstructions[0]?.steps.map(step => step.step) || [];
+
+    res.json({
+      title: recipe.title,
+      image: recipe.image,
+      ingredients,
+      steps,
+      nutrition: recipe.nutrition || null
+    });
+  } catch (error) {
+    console.error('Random Recipe Error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch random recipe' });
+  }
+});

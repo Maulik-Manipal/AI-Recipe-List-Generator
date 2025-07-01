@@ -3,168 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recipe and Grocery List</title>
-  <style>
-    body {
-      background-color: black;
-      color: white;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .header {
-      text-align: center;
-      padding: 20px;
-    }
-    .tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .tab-button {
-      padding: 10px 20px;
-      background-color: #333;
-      color: white;
-      border: none;
-      cursor: pointer;
-      margin: 0 5px;
-    }
-    .tab-button.active {
-      background-color: #555;
-    }
-    .tab-button:hover {
-      background-color: #444;
-    }
-    .tab-content {
-      padding: 20px;
-      border: 1px solid #555;
-      background-color: #222;
-      margin: 0 auto;
-      width: 80%;
-    }
-    input[type="text"], button {
-      padding: 5px;
-      margin: 5px;
-      background-color: #333;
-      color: white;
-      border: 1px solid #555;
-    }
-    button {
-      cursor: pointer;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 5px 0;
-    }
-    label {
-      margin-left: 5px;
-    }
-  </style>
+  <title>Design a Recipe</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
 <body>
-  <div class="header">
-    <input type="text" id="search-input" placeholder="Search for recipes...">
-    <button id="search-button">Search</button>
-  </div>
+  <header class="header">
+    <h1>🍴 Recipe Finder</h1>
+    <div class="theme-toggle">
+      <i class="fas fa-sun"></i>
+      <label class="switch">
+        <input type="checkbox" id="theme-switch">
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </header>
+
   <div class="tabs">
-    <button class="tab-button" data-tab="ai-recipe">AI-Recipe</button>
-    <button class="tab-button" data-tab="grocery-list">Basic Grocery List</button>
+    <button class="tab-button active" data-tab="ai-recipe">
+      <i class="fas fa-robot"></i> Maker Recipes
+    </button>
+    <button class="tab-button" data-tab="recommendations">
+      <i class="fas fa-star"></i> Recommended for You
+    </button>
+    <button class="tab-button" data-tab="meal-planner">
+      <i class="fas fa-calendar-alt"></i> Meal Planner
+    </button>
+    <button class="tab-button" data-tab="grocery-list">
+      <i class="fas fa-shopping-cart"></i> Grocery List
+    </button>
+    <button class="tab-button" data-tab="random-recipe">
+      <i class="fas fa-random"></i> Random Recipe
+    </button>
+    <button class="tab-button" data-tab="image-tab">
+      <i class="fas fa-image"></i> Image Upload
+    </button>
   </div>
-  <div class="tab-content" id="ai-recipe">
-    <h2>AI-Recipe</h2>
-    <label for="recipe-input">Enter Recipe Name:</label>
-    <input type="text" id="recipe-input">
-    <button id="get-ingredients">Get Ingredients</button>
-    <div id="ingredients-list">
-      <!-- Ingredients will be displayed here -->
+
+  <div class="tab-content active" id="ai-recipe">
+    <div class="recipe-card">
+      <form id="recipe-form">
+        <div class="input-group">
+          <label for="dish"><i class="fas fa-utensils"></i> Dish Name:</label>
+          <input type="text" id="dish" name="dish" placeholder="e.g., Lobster Risotto" required>
+        </div>
+        <div class="input-group">
+          <label for="servings"><i class="fas fa-users"></i> Servings:</label>
+          <input type="number" id="servings" name="servings" min="1" value="4" required>
+        </div>
+        <button type="submit" class="cta-button">
+          <i class="fas fa-magic"></i> Generate Recipe
+        </button>
+      </form>
+      <div id="recipe-result" class="recipe-result">
+        </div>
+      
+      <div id="video-container" class="recipe-result">
+        </div>
+
     </div>
   </div>
-  <div class="tab-content" id="grocery-list" style="display: none;">
-    <h2>Basic Grocery List</h2>
-    <label for="grocery-input">Add Item:</label>
-    <input type="text" id="grocery-input">
-    <ul id="grocery-list">
-      <!-- Grocery items will be added here -->
-    </ul>
+
+  <div class="tab-content" id="recommendations" style="display: none;">
+    <h2>Recommended for You</h2>
+    <form id="preferences-form">
+      <label for="diet">Dietary Preference:</label>
+      <select id="diet">
+        <option value="">None</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="gluten-free">Gluten-Free</option>
+      </select>
+      <label for="ingredients">Favorite Ingredients (comma-separated):</label>
+      <input type="text" id="ingredients" placeholder="e.g., chicken, tomato">
+      <button type="submit">Get Recommendations</button>
+    </form>
+    <div id="recommendations-result"></div>
   </div>
-  <script>
-    // Sample recipes object for demonstration
-    const recipes = {
-      "matar paneer": ["paneer", "peas", "tomatoes", "onions", "spices"],
-      "pasta": ["pasta", "tomato sauce", "cheese", "basil"]
-    };
 
-    // Tab functionality
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const tabId = button.getAttribute('data-tab');
-        tabContents.forEach(content => {
-          content.style.display = content.id === tabId ? 'block' : 'none';
-        });
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-      });
-    });
-    // Set "AI-Recipe" tab as active by default
-    tabButtons[0].click();
+  <div class="tab-content" id="meal-planner">
+    <div class="meal-planner-container">
+      <h2><i class="fas fa-calendar-week"></i> Planner</h2>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+  </div>
 
-    // Display recipe ingredients
-    document.getElementById('get-ingredients').addEventListener('click', function() {
-      const recipeName = document.getElementById('recipe-input').value.toLowerCase();
-      const ingredientsList = document.getElementById('ingredients-list');
-      ingredientsList.innerHTML = ''; // Clear previous content
-      if (recipes[recipeName]) {
-        const ul = document.createElement('ul');
-        recipes[recipeName].forEach(ingredient => {
-          const li = document.createElement('li');
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          const label = document.createElement('label');
-          label.textContent = ingredient;
-          li.appendChild(checkbox);
-          li.appendChild(label);
-          ul.appendChild(li);
-        });
-        ingredientsList.appendChild(ul);
-      } else {
-        ingredientsList.textContent = 'Recipe not found.';
-      }
-    });
+<div class="tab-content" id="grocery-list">
+  <div class="grocery-card">
+    <div class="grocery-input-group">
+      <input type="text" id="grocery-input" placeholder="Add item (e.g., Milk)">
+      <button class="add-button" id="add-grocery">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+    <div id="grocery-items" class="grocery-items"></div> <!-- Changed to div -->
+    <div class="grocery-actions">
+      <button class="clear-button" id="clear-list">
+        <i class="fas fa-trash"></i> Clear List
+      </button>
+    </div>
+  </div>
+</div>
+  <div class="loading-spinner" id="loading-spinner"></div>
+  <script src="js/script.js"></script>
+  <script src="./js/animations.js"></script>
 
-    // Add items to grocery list
-    document.getElementById('grocery-input').addEventListener('keyup', function(event) {
-      if (event.key === 'Enter' && this.value.trim() !== '') {
-        const li = document.createElement('li');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        const label = document.createElement('label');
-        label.textContent = this.value.trim();
-        li.appendChild(checkbox);
-        li.appendChild(label);
-        document.getElementById('grocery-list').appendChild(li);
-        this.value = ''; // Clear input
-      }
-    }); 
+<div class="tab-content" id="random-recipe" style="display: none;">
+  <div class="recipe-card">
+    <div class="input-group">
+      <label for="include-tags"><i class="fas fa-filter"></i> Include Tags:</label>
+      <select id="include-tags" multiple>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="dessert">Dessert</option>
+        <option value="main course">Main Course</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="gluten free">Gluten Free</option>
+        <option value="salad">Salad</option>
+        <option value="soup">Soup</option>
+        <option value="snack">Snack</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label for="exclude-ingredients"><i class="fas fa-ban"></i> Exclude Ingredients:</label>
+      <input type="text" id="exclude-ingredients" placeholder="e.g., nuts, dairy">
 
-    // Search bar functionality
-    document.getElementById('search-button').addEventListener('click', function() {
-      const searchTerm = document.getElementById('search-input').value.toLowerCase();
-      document.getElementById('recipe-input').value = searchTerm;
-      document.getElementById('get-ingredients').click();
-      document.querySelector('.tab-button[data-tab="ai-recipe"]').click();
-    });
+    <div class="input-group">
+      <label><input type="checkbox" id="include-nutrition"> Include Nutrition Info</label>
+    </div>
 
-    // Search on Enter key
-    document.getElementById('search-input').addEventListener('keyup', function(event) {
-      if (event.key === 'Enter') {
-        document.getElementById('search-button').click();
-      }
-    });
-  </script>
+    <button id="get-random" class="cta-button">
+      <i class="fas fa-dice"></i> Get Random Recipe
+    </button>
+
+    <div id="random-result" class="recipe-result"></div>
+  </div>
+</div>
+
+<div id="image-tab" class="tab-content" style="display:none;">
+  <h2>Generate Recipe from Image</h2>
+  <form id="image-upload-form" enctype="multipart/form-data">
+    <input type="file" id="image-input" accept="image/*" required />
+    <button type="submit">Generate</button>
+  </form>
+  <div id="image-loading-spinner" style="display:none;">Loading...</div>
+  <div id="image-recipe-result"></div>
+</div>
+
+
 </body>
 </html>

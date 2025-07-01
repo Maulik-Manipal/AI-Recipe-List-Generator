@@ -338,3 +338,58 @@ select[multiple] {
 .clear-button:hover {
   background: #c0392b;
 }
+
+.custom-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary);
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.2s;
+  border: none;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(46,204,113,0.15);
+}
+
+.custom-upload-btn:hover {
+  background: #25b964;
+  transform: scale(1.05);
+}
+
+#selected-file-name {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-left: 1rem;
+}
+
+#image-loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+#image-loading-spinner p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.detection-result {
+  background: rgba(46, 204, 113, 0.1);
+  border-left: 4px solid var(--primary);
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.detection-result p {
+  margin: 0;
+  font-size: 1.1rem;
+}

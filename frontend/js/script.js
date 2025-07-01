@@ -1,5 +1,3 @@
-// script.js (FULL UPDATED FILE)
-
 document.addEventListener('DOMContentLoaded', () => {
   // Utility to get selected values from <select multiple>
   const getSelectedValues = (select) =>
@@ -13,7 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => {
       const tabId = button.getAttribute('data-tab');
       tabContents.forEach(content => {
-        content.style.display = content.id === tabId ? 'block' : 'none';
+        // Show the selected tab, hide others
+        if (content.id === tabId) {
+          content.style.display = 'block';
+          content.classList.add('active');
+        } else {
+          content.style.display = 'none';
+          content.classList.remove('active');
+        }
       });
       tabButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
@@ -21,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Default tab
-  if (tabButtons.length) tabButtons[0].click();
+  if (tabButtons.length && !document.querySelector('.tab-button.active')) {
+  tabButtons[0].click();
+}
 
   // Random Recipe Fetch
   const randomButton = document.getElementById('get-random');
@@ -281,4 +288,56 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
   });
+
+async function uploadImage() {
+  const input = document.getElementById('imageInput');
+  const resultBox = document.getElementById('imageRecipeResult');
+
+  if (!input.files || input.files.length === 0) {
+    resultBox.innerHTML = "<p style='color: red;'>Please select an image.</p>";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('image', input.files[0]);
+
+  resultBox.innerHTML = "⏳ Generating recipe...";
+
+  try {
+    const response = await fetch('http://localhost:3000/api/image-recipe', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to generate recipe');
+    }
+
+    resultBox.innerHTML = `
+      <div class="detection-result">
+        <p>Detected: <strong>${data.detected_food}</strong> (${(data.confidence * 100).toFixed(1)}% confidence)</p>
+      </div>
+      <h2>${data.dish}</h2>
+      <div class="recipe-meta">
+        <span><i class="fas fa-utensils"></i> ${data.ingredients.length} ingredients</span>
+        <span><i class="fas fa-list-ol"></i> ${data.steps.length} steps</span>
+      </div>
+      <h3><i class="fas fa-carrot"></i> Ingredients:</h3>
+      <ul class="ingredients-list">
+        ${data.ingredients.map(i => `<li>${i}</li>`).join('')}
+      </ul>
+      <h3><i class="fas fa-list-ol"></i> Instructions:</h3>
+      <ol class="steps-list">
+        ${data.steps.map((s, i) => `<li>${s}</li>`).join('')}
+      </ol>
+    `;
+}
+  catch (err) {
+    console.error(err);
+    resultBox.innerHTML = `<p style="color: red;">❌ Error: ${err.message}</p>`;
+  }
+}
+
 });

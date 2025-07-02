@@ -27,9 +27,6 @@
     <button class="tab-button" data-tab="recommendations">
       <i class="fas fa-star"></i> Recommended for You
     </button>
-    <button class="tab-button" data-tab="meal-planner">
-      <i class="fas fa-calendar-alt"></i> Meal Planner
-    </button>
     <button class="tab-button" data-tab="grocery-list">
       <i class="fas fa-shopping-cart"></i> Grocery List
     </button>
@@ -141,91 +138,180 @@
   </div>
 
   <div id="image-tab" class="tab-content" style="display:none;">
-    <div class="recipe-card">
-      <h2><i class="fas fa-image"></i> Generate Recipe from Image</h2>
-      <form id="image-upload-form" enctype="multipart/form-data">
-        <div class="input-group">
-          <label for="image-input" class="custom-upload-btn">
-            <i class="fas fa-upload"></i> Choose Image
-          </label>
-          <input type="file" id="image-input" accept="image/*" required style="display: none;" />
-          <span id="selected-file-name">No file chosen</span>
-        </div>
-        <button type="submit" class="cta-button">
-          <i class="fas fa-magic"></i> Generate Recipe
-        </button>
-      </form>
-      <div id="image-loading-spinner" style="display:none; margin: 20px 0;">
-        <div class="loading-spinner"></div>
-        <p>Analyzing your image...</p>
+  <div class="recipe-card">
+    <h2><i class="fas fa-image"></i> Generate Recipe from Image</h2>
+    <form id="image-upload-form" enctype="multipart/form-data">
+      <div class="input-group">
+        <label for="image-input" class="custom-upload-btn">
+          <i class="fas fa-upload"></i> Choose Image
+        </label>
+        <input type="file" id="image-input" accept="image/*" required style="display: none;" />
+        <span id="selected-file-name">No file chosen</span>
       </div>
-      <div id="image-recipe-result" class="recipe-result"></div>
+      <div class="preview-container" id="image-preview" style="display:none; margin: 10px 0;">
+        <img id="preview-image" src="#" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px;">
+      </div>
+      <button type="submit" class="cta-button">
+        <i class="fas fa-magic"></i> Generate Recipe
+      </button>
+    </form>
+    <div id="image-loading-spinner" style="display:none; margin: 20px 0;">
+      <div class="loading-spinner"></div>
+      <p>Analyzing your image...</p>
     </div>
+    <div id="image-recipe-result" class="recipe-result"></div>
+    <div id="video-container-image" class="recipe-result">
+        </div>
   </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const imageInput = document.getElementById('image-input');
+  const imagePreview = document.getElementById('image-preview');
+  const previewImage = document.getElementById('preview-image');
+  const videoContainer = document.getElementById('video-container-image');
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Existing script.js content would be here
-      
-      // Add image upload specific functionality
-      const imageInput = document.getElementById('image-input');
-      if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-          const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
-          document.getElementById('selected-file-name').textContent = fileName;
-        });
-      }
+  if (imageInput) {
+    imageInput.addEventListener('change', function(e) {
+      const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+      document.getElementById('selected-file-name').textContent = fileName;
 
-      const imageUploadForm = document.getElementById('image-upload-form');
-      if (imageUploadForm) {
-        imageUploadForm.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          await uploadImage();
-        });
-      }
-
-      async function uploadImage() {
-        const input = document.getElementById('image-input');
-        const resultBox = document.getElementById('image-recipe-result');
-        const spinner = document.getElementById('image-loading-spinner');
-
-        if (!input.files || input.files.length === 0) {
-          resultBox.innerHTML = "<p style='color: red;'>Please select an image.</p>";
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('image', input.files[0]);
-
-        resultBox.innerHTML = "";
-        spinner.style.display = 'flex';
-        spinner.style.flexDirection = 'column';
-        spinner.style.alignItems = 'center';
-
-        try {
-          const response = await fetch('http://localhost:3000/api/image-recipe', {
-            method: 'POST',
-            body: formData
-          });
-
-          const data = await response.json();
-
-          if (data.error) throw new Error(data.error);
-
-          resultBox.innerHTML = `
-            <h3>🧾 Ingredients:</h3>
-            <ul>${data.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
-            <h3>👨‍🍳 Steps:</h3>
-            <ol>${data.steps.map(s => `<li>${s}</li>`).join('')}</ol>
-          `;
-        } catch (err) {
-          console.error(err);
-          resultBox.innerHTML = `<p style="color: red;">❌ Error: ${err.message}</p>`;
-        } finally {
-          spinner.style.display = 'none';
-        }
+      // Show preview
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(e.target.files[0]);
       }
     });
-  </script>
+  }
+
+  const imageUploadForm = document.getElementById('image-upload-form');
+  if (imageUploadForm) {
+    imageUploadForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      await uploadImage();
+    });
+  }
+
+  async function uploadImage() {
+    const input = document.getElementById('image-input');
+    const resultBox = document.getElementById('image-recipe-result');
+    const spinner = document.getElementById('image-loading-spinner');
+    const videoContainer = document.getElementById('video-container-image');
+
+    // Reset previous results
+    resultBox.innerHTML = "";
+    // Instead of clearing the video container, update or reuse the iframe if it exists
+    let existingIframe = videoContainer.querySelector('iframe');
+    let existingTitle = videoContainer.querySelector('h3');
+    if (existingIframe) {
+      existingIframe.src = '';
+    }
+    if (existingTitle) {
+      existingTitle.textContent = '';
+    }
+
+    if (!input.files || input.files.length === 0) {
+      resultBox.innerHTML = "<p class='error-message'>Please select an image.</p>";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', input.files[0]);
+
+    spinner.style.display = 'flex';
+    spinner.style.flexDirection = 'column';
+    spinner.style.alignItems = 'center';
+
+    try {
+      const response = await fetch('http://127.0.0.1:3000/api/image-recipe', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        let errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          errorText = errorData.error || errorData.message || errorText;
+        } catch (e) {}
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      if (!data.food || !data.ingredients || !data.steps) {
+        throw new Error('Invalid recipe data received from server');
+      }
+
+      // Display recipe result
+      resultBox.innerHTML = `
+        <div class="detected-food">
+          <h3><i class="fas fa-utensils"></i> Detected: ${data.food} (${Math.round(data.confidence * 100)}% confidence)</h3>
+          <div class="recipe-details">
+            <h4><i class="fas fa-list"></i> Ingredients:</h4>
+            <ul>${data.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+            <h4><i class="fas fa-list-ol"></i> Steps:</h4>
+            <ol>${data.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+          </div>
+        </div>
+      `;
+
+      // === Fetch YouTube Video ===
+      const ytRes = await fetch(`http://localhost:3000/api/youtube/search?q=${encodeURIComponent(data.food)}`);
+      const ytData = await ytRes.json();
+
+      if (ytRes.ok && ytData.embedUrl) {
+        // Clear the video container before adding new video (like Maker Recipes tab)
+        videoContainer.innerHTML = '';
+        const title = document.createElement('h3');
+        title.textContent = '🎥 Video Tutorial';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'iframe-container';
+        const iframe = document.createElement('iframe');
+        iframe.src = `${ytData.embedUrl}?rel=0`;
+        iframe.title = `YouTube tutorial for ${data.food}`;
+        iframe.allowFullscreen = true;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        wrapper.appendChild(iframe);
+        videoContainer.appendChild(title);
+        videoContainer.appendChild(wrapper);
+      } else {
+        videoContainer.innerHTML = `<p>No video found for "${data.food}".</p>`;
+      }
+
+    } catch (err) {
+      console.error('Full error:', err);
+      let errorHTML = `
+        <div class="error-message">
+          <h4>❌ Error Processing Image</h4>
+          <p>${err.message || 'Please try again with a clear food image'}</p>
+      `;
+
+      if (err.message.includes('Python service') || err.message.includes('ECONNREFUSED')) {
+        errorHTML += `
+          <div class="troubleshooting">
+            <p><strong>Troubleshooting:</strong></p>
+            <ol>
+              <li>Make sure the Python food recognition service is running</li>
+              <li>Open a terminal and run: <code>cd food-service && python app.py</code></li>
+              <li>Keep that terminal open while using the app</li>
+            </ol>
+          </div>
+        `;
+      }
+
+      errorHTML += `</div>`;
+      resultBox.innerHTML = errorHTML;
+    } finally {
+      spinner.style.display = 'none';
+    }
+  }
+});
+</script>
 </body>
 </html>

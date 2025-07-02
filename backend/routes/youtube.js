@@ -19,7 +19,7 @@ router.get('/search', async (req, res) => {
       part: 'snippet',
       q: `${q} recipe`,
       type: 'video',
-      maxResults: 1,
+      maxResults: 3,
       videoEmbeddable: true,
       videoDuration: 'medium'
     });

@@ -3,3 +3,4 @@ torch
 transformers
 pillow
 requests
+tensorflow==2.16.1  # Update to latest stable version

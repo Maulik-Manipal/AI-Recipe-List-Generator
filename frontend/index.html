@@ -41,9 +41,10 @@
   <div class="tab-content active" id="ai-recipe">
     <div class="recipe-card">
       <form id="recipe-form">
-        <div class="input-group">
+        <div class="input-group" style="position: relative;">
           <label for="dish"><i class="fas fa-utensils"></i> Dish Name:</label>
-          <input type="text" id="dish" name="dish" placeholder="e.g., Lobster Risotto" required>
+          <input type="text" id="dish" name="dish" placeholder="e.g., Cake" autocomplete="off" required>
+          <ul id="dish-suggestions" class="autocomplete-list"></ul>
         </div>
         <div class="input-group">
           <label for="servings"><i class="fas fa-users"></i> Servings:</label>
@@ -126,9 +127,6 @@
       <div class="input-group">
         <label for="exclude-ingredients"><i class="fas fa-ban"></i> Exclude Ingredients:</label>
         <input type="text" id="exclude-ingredients" placeholder="e.g., nuts, dairy">
-      </div>
-      <div class="input-group">
-        <label><input type="checkbox" id="include-nutrition"> Include Nutrition Info</label>
       </div>
       <button id="get-random" class="cta-button">
         <i class="fas fa-dice"></i> Get Random Recipe

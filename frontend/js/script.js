@@ -339,5 +339,44 @@ async function uploadImage() {
     resultBox.innerHTML = `<p style="color: red;">❌ Error: ${err.message}</p>`;
   }
 }
+const dishInput = document.getElementById('dish');
+const dishSuggestions = document.getElementById('dish-suggestions');
+
+if (dishInput) {
+  dishInput.addEventListener('input', async () => {
+    const query = dishInput.value.trim();
+    if (!query) {
+      dishSuggestions.innerHTML = '';
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/autocomplete?q=${encodeURIComponent(query)}`);
+      const suggestions = await response.json();
+
+      dishSuggestions.innerHTML = '';
+      suggestions.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.title;
+        li.onclick = () => {
+          dishInput.value = item.title;
+          dishSuggestions.innerHTML = '';
+        };
+        dishSuggestions.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Autocomplete error:', error);
+      dishSuggestions.innerHTML = '';
+    }
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!dishSuggestions.contains(e.target) && e.target !== dishInput) {
+      dishSuggestions.innerHTML = '';
+    }
+  });
+}
+
 
 });

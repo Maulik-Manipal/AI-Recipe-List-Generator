@@ -12,6 +12,8 @@ const PORT = 3000;
 const PYTHON_PORT = 5000;
 const PYTHON_HOST = '127.0.0.1';
 const FRONTEND_PATH = path.join(__dirname, '../frontend');
+const autocompleteRoute = require('./routes/autocomplete');
+app.use('/api', autocompleteRoute);
 
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
@@ -197,6 +199,20 @@ app.get('/api/random-recipe', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch random recipe' });
   }
 });
+
+app.get('/api/nutrition-widget/:id', (req, res) => {
+  const { id } = req.params;
+  const apiKey = process.env.SPOONACULAR_API_KEY;
+
+  if (!apiKey) {
+    return res.status(500).send('Missing Spoonacular API key');
+  }
+
+  const widgetURL = `https://api.spoonacular.com/recipes/${id}/nutritionWidget?defaultCss=true&apiKey=${apiKey}`;
+
+  res.redirect(widgetURL);
+});
+
 
 // ---------------------------
 // 📁 Serve frontend
